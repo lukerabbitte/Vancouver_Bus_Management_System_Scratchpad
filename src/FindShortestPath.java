@@ -1,11 +1,14 @@
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class FindShortestPath {
 
     private EdgeWeightedDigraph myGraph;
+    private static HashMap<Integer, Boolean> vertexEncountered = new HashMap<Integer, Boolean>();
 
     FindShortestPath (String filename){
         myGraph = initialiseMyGraph(filename); // let's add all vertices from stops.txt to initial graph.
@@ -16,11 +19,64 @@ public class FindShortestPath {
     public static boolean getShortestPath() {
 
         String filename = "stops.txt";
-        FindShortestPath sp = new FindShortestPath(filename);
+        FindShortestPath myShortestPath = new FindShortestPath(filename);
+        double totalCost = -1.0;
 
+        int fromVertex = (vertexPair().getKey());
+        int toVertex = (vertexPair().getValue());
 
+        //TODO this is where we could search for vertices by their map index. I'm going to just search through our
+        //TODO adjacency list representation.
+
+        DijkstraSP myDijkstraGraph = new DijkstraSP(myShortestPath.myGraph, fromVertex);
+
+        if (myDijkstraGraph.hasPathTo(toVertex)) {
+
+            totalCost = myDijkstraGraph.distTo(toVertex);
+            JOptionPane.showMessageDialog(null, "Total cost of route between two stops: " + totalCost);
+
+            String intermediateStopsAndCosts = "";
+            Iterable<DirectedEdge> stopList = myDijkstraGraph.pathTo(toVertex);
+            JOptionPane.showMessageDialog(null, "List of intermediate stops and edge costs " +
+                    "along route between stops" + totalCost);
+            for (DirectedEdge stop: stopList) {
+                intermediateStopsAndCosts += ("From Stop ID " + stop.from() + " to Stop ID " + stop.to() +
+                        " the cost is " + stop.weight()) + "\n";
+            }
+            return true;
+        }
+        else {
+            System.out.println("There's no path from stop \"" + sourceStop + "\" to stop \"" + destinationStop + "\"");
+        }
         return false;
     }
+
+    private static AbstractMap.SimpleEntry<Integer, Integer> vertexPair() {
+
+        boolean validInput = false;
+
+        while (!validInput) {
+
+            String fromVertex = JOptionPane.showInputDialog("Enter the ID of the first stop");
+            String toVertex = JOptionPane.showInputDialog("Enter the ID of the second stop");
+            int from = Integer.parseInt(fromVertex);
+            int to = Integer.parseInt(toVertex);
+
+            if ( (vertexEncountered.get(from) != null) && (vertexEncountered.get(to) != null) ) {
+                validInput = true;
+            }
+
+            else {
+                JOptionPane.showMessageDialog(null, "One of the stops " +
+                        "entered has no adjacent edges");
+            }
+
+
+        }
+
+        return new AbstractMap.SimpleEntry<Integer, Integer>(from, to);
+    }
+
 
     public EdgeWeightedDigraph initialiseMyGraph(String filename) {
 
@@ -44,7 +100,6 @@ public class FindShortestPath {
             JOptionPane.showMessageDialog(null,"File used to initialise graph " +
                     "not found. Read terminal for stack trace");
         }
-
         return myGraph;
     }
 
@@ -79,6 +134,8 @@ public class FindShortestPath {
 
                 DirectedEdge currentEdge = new DirectedEdge(fromVertex, toVertex, weight);
                 myGraph.addEdge(currentEdge);
+                vertexEncountered.put(fromVertex, true);
+                vertexEncountered.put(toVertex, true);
             }
         }
         catch (FileNotFoundException e) {
@@ -123,6 +180,8 @@ public class FindShortestPath {
                 if ( (currentTripID == nextTripID) && (currentStopSequenceNumber == (nextStopSequenceNumber-1)) ) {
                     DirectedEdge currentEdge = new DirectedEdge(currentStopID, nextStopID, weight);
                     myGraph.addEdge(currentEdge);
+                    vertexEncountered.put(currentStopID, true);
+                    vertexEncountered.put(nextStopID, true);
                 }
 
                 currentLine = nextLine;
