@@ -6,6 +6,9 @@
  *  Immutable weighted directed edge.
  *
  ******************************************************************************/
+
+import edu.princeton.cs.algs4.StdOut;
+
 /**
  *  The {@code DirectedEdge} class represents a weighted edge in an 
  *  {@link EdgeWeightedDigraph}. Each edge consists of two integers
