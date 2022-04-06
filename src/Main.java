@@ -23,22 +23,21 @@ public class Main {
             }
             else if (optionChoice == 1) {
                 validInput = true;
+                callFindShortestPath();
             }
             else if (optionChoice == 2) {
                 validInput = true;
+                callSearchForStop();
             }
             else if (optionChoice == 3) {
                 validInput = true;
+                callSearchByArrivalTime();
             }
-
+            else
+                JOptionPane.showMessageDialog(null,"There has been an error. Try again.");
         }
 
-
-
-
-
     }
-
 
     private static int showMenuAndReturnChoice(int choice) {
 
@@ -53,12 +52,39 @@ public class Main {
             choice = 0;
         else if (selectionString=="Find Shortest Path Between Two Stops")
             choice = 1;
-        else if (selectionString=="Find Shortest Path Between Two Stops")
+        else if (selectionString=="Search For A Stop")
             choice = 2;
-        else if (selectionString=="Find Shortest Path Between Two Stops")
+        else if (selectionString=="Search By Arrival Time")
             choice = 3;
 
         return choice;
+    }
+
+    private static void callFindShortestPath() {
+
+        boolean successfulCall = false;
+
+        while(!successfulCall) {
+            if(FindShortestPath.getShortestPath()) {
+                successfulCall = true;
+            }
+        }
+    }
+
+    public static void callSearchForStop() {
+
+        SearchForStop myStopSearch = new SearchForStop("stops.txt");
+        boolean validSearch = false;
+
+        while(!validSearch) {
+            System.out.println("Enter the stop you are looking for:\n");
+            String inputStop = userInput.nextLine();
+            if(myStopSearch.displayStopDetails(inputStop.toUpperCase()))
+                validSearch = true;
+
+        }
+
+        userInput.close();
     }
 
 }
