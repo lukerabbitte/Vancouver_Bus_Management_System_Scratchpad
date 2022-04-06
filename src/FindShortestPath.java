@@ -22,9 +22,6 @@ public class FindShortestPath {
         return false;
     }
 
-
-
-    //TODO should we initialise the graph to be vertex-indexed by stop_id right here or wait till later?
     public EdgeWeightedDigraph initialiseMyGraph(String filename) {
 
         if (filename == null) {
@@ -75,23 +72,13 @@ public class FindShortestPath {
                 transferType = Integer.parseInt(currentLineParse[2]);
                 minTransferTime = Double.parseDouble(currentLineParse[3]);
 
-                if(map.get(fromVertex)==null) {	// if bus stop not already encountered
-                    map.put(fromVertex, mapIndex);
-                    mapIndex++;
-                }
-
-                if(map.get(toVertex)==null) {	// if bus stop not already encountered
-                    map.put(toVertex, mapIndex);
-                    mapIndex++;
-                }
-
                 if (transferType==0)
                     weight = 2;
                 else if (transferType==2)
                     weight = minTransferTime/100;
 
-                DirectedEdge edge = new DirectedEdge(map.get(fromVertex), map.get(toVertex), weight);
-                graph.addEdge(edge);
+                DirectedEdge currentEdge = new DirectedEdge(fromVertex, toVertex, weight);
+                myGraph.addEdge(currentEdge);
             }
         }
         catch (FileNotFoundException e) {
@@ -99,10 +86,56 @@ public class FindShortestPath {
                     "Read terminal for stack trace");
             e.printStackTrace();
         }
-        return graph;
+        return myGraph;
     }
 
+    public EdgeWeightedDigraph addStopTimesEdges() {
 
+        int currentTripID = -1;
+        int currentStopID = -1;
+        int currentStopSequenceNumber = -1;
+        int nextTripID = -1;
+        int nextStopID = -1;
+        int nextStopSequenceNumber = -1;
+        double weight = 1.0;
+
+        try {
+            File file = new File("stop_times.txt");
+            Scanner scanFile = new Scanner(file);
+            String skipMetadataLine = scanFile.nextLine();
+
+            String currentLine = scanFile.nextLine();
+            String[] currentLineParse = currentLine.split(",");
+
+            while(scanFile.hasNextLine()) {
+
+                String nextLine = scanFile.nextLine();
+                String[] nextLineParse = currentLine.split(",");
+
+                currentTripID = Integer.parseInt(currentLineParse[0]);
+                currentStopID = Integer.parseInt(currentLineParse[3]);
+                currentStopSequenceNumber = Integer.parseInt(currentLineParse[4]);
+
+                nextTripID = Integer.parseInt(currentLineParse[0]);
+                nextStopID = Integer.parseInt(currentLineParse[3]);
+                nextStopSequenceNumber = Integer.parseInt(currentLineParse[4]);
+
+                if ( (currentTripID == nextTripID) && (currentStopSequenceNumber == (nextStopSequenceNumber-1)) ) {
+                    DirectedEdge currentEdge = new DirectedEdge(currentStopID, nextStopID, weight);
+                    myGraph.addEdge(currentEdge);
+                }
+
+                currentLine = nextLine;
+                currentLineParse = nextLineParse;
+            }
+        }
+        catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null,"Stop times file not found." +
+                    "Read terminal for stack trace");
+            e.printStackTrace();
+        }
+        return myGraph;
+    }
 
 
 
