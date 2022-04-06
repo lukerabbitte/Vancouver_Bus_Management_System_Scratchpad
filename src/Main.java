@@ -2,6 +2,9 @@ import edu.princeton.cs.algs4.Bag;
 import edu.princeton.cs.algs4.MinPQ;
 
 import javax.swing.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Main {
@@ -71,20 +74,36 @@ public class Main {
         }
     }
 
-    public static void callSearchForStop() {
+    private static void callSearchForStop() {
 
         SearchForStop myStopSearch = new SearchForStop("stops.txt");
-        boolean validSearch = false;
+        boolean successfulCall = false;
 
-        while(!validSearch) {
-            System.out.println("Enter the stop you are looking for:\n");
-            String inputStop = userInput.nextLine();
-            if(myStopSearch.displayStopDetails(inputStop.toUpperCase()))
-                validSearch = true;
-
+        while(!successfulCall) {
+            String stopName = JOptionPane.showInputDialog("Enter the name of the bus stop you are searching for");
+            if(myStopSearch.displayStopDetails(stopName.toUpperCase()))
+                successfulCall = true;
         }
+    }
 
-        userInput.close();
+    private static void callSearchByArrivalTime() {
+
+        boolean successfulCall = false;
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        timeFormat.setLenient(false); // ensure strict conditions on numbers entered
+
+        while(!successfulCall) {
+
+            String arrivalTime = JOptionPane.showInputDialog("Enter the arrival time you want to find details for");
+
+            try {
+                timeFormat.parse(arrivalTime);
+                if(SearchByArrivalTime.getDetails(arrivalTime))
+                    successfulCall = true;
+            } catch(ParseException e) {
+                System.out.println("\"" + arrivalTime + "\" is not in a valid time format. \n");
+            }
+        }
     }
 
 }
