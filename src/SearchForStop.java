@@ -1,9 +1,10 @@
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
 
 public class SearchForStop {
@@ -15,9 +16,9 @@ public class SearchForStop {
     private static final int STOP_LAT_INDEX = 4;
     private static final int STOP_LON_INDEX = 5;
     private static final int ZONE_ID_INDEX = 6;
-    private static final int STOP_URL_INDEX = 7;
-    private static final int LOCATION_TYPE_INDEX = 8;
-    private static final int PARENT_STATION_INDEX = 9;
+    //private static final int STOP_URL_INDEX = 7; // this piece of metadata is never used.
+    private static final int LOCATION_TYPE_INDEX = 7;
+    private static final int PARENT_STATION_INDEX = 8;
 
     private boolean successfulCall = false;
     private HashMap<String, String> myMap;
@@ -43,6 +44,8 @@ public class SearchForStop {
 
                 //Use a string builder to move keywords to end of string before adding to TST
                 StringBuilder adjustedStopName = new StringBuilder();
+                adjustedStopName.append(currentStopDetails[STOP_NAME_INDEX]);
+
                 if (adjustedStopName.substring(0, 8).equals("FLAGSTOP"))
                 {
                     String flagstopAndTwoLetterKeywordSection = adjustedStopName.substring(0, 11);
@@ -90,17 +93,20 @@ public class SearchForStop {
     public boolean displayStopDetails(String inputString) {
 
         final boolean[] outputSuccessful = {false};
+        StringBuilder outputBuilder = new StringBuilder();
 
         myTST.keysWithPrefix(inputString).forEach((currentInfo) -> {
-            JOptionPane.showMessageDialog(null,currentInfo);
+            outputBuilder.append(currentInfo).append("\n");
             outputSuccessful[0] = true;
         });
 
         if (outputSuccessful[0]==false) {
             JOptionPane.showMessageDialog(null,"No matches have been found for the" +
-                    "bus stop specified.");
+                    " bus stop specified.");
         }
-
+        else {
+            ShowScrollingText longMessage = new ShowScrollingText(outputBuilder.toString());
+        }
         return outputSuccessful[0];
     }
 }
