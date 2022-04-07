@@ -7,8 +7,20 @@ import java.util.Scanner;
 
 public class FindShortestPath {
 
+    // Relevant metadata indices from transfers.txt
+    private static final int FROM_INDEX = 0;
+    private static final int TO_INDEX = 1;
+    private static final int TRANSFER_TYPE_INDEX = 2;
+    private static final int MIN_TRANSFER_TIME_INDEX = 3;
+
+    //Relevant metadata indices from stop_times.txt
+    private static final int TRIP_ID_INDEX = 0;
+    private static final int STOP_ID_INDEX = 3;
+    private static final int STOP_SEQ_INDEX = 4;
+
     private EdgeWeightedDigraph myGraph;
-    private static HashMap<Integer, Boolean> vertexEncountered = new HashMap<Integer, Boolean>();
+    private static HashMap<Integer, Boolean> vertexEncountered = new HashMap<Integer, Boolean>(); /* adds efficiency
+                                as vertices with no adjacent edges are immediately discounted from Dijsktra search */
 
     FindShortestPath (String filename){
         myGraph = initialiseMyGraph(filename); // let's add all vertices from stops.txt to initial graph.
@@ -35,18 +47,17 @@ public class FindShortestPath {
             totalCost = myDijkstraGraph.distTo(toVertex);
             JOptionPane.showMessageDialog(null, "Total cost of route between two stops: " + totalCost);
 
-            String intermediateStopsAndCosts = "";
+            StringBuilder intermediateStopsAndCosts = new StringBuilder();
             Iterable<DirectedEdge> stopList = myDijkstraGraph.pathTo(toVertex);
-            JOptionPane.showMessageDialog(null, "List of intermediate stops and edge costs " +
-                    "along route between stops" + totalCost);
             for (DirectedEdge stop: stopList) {
-                intermediateStopsAndCosts += ("From Stop ID " + stop.from() + " to Stop ID " + stop.to() +
-                        " the cost is " + stop.weight()) + "\n";
+                intermediateStopsAndCosts.append("From Stop ID ").append(stop.from()).append(" to Stop ID ")
+                        .append(stop.to()).append(", the cost is ").append(stop.weight()).append("\n");
             }
+
+            /* Perhaps JOptionPane is not the best for displaying long streams of output like in this case.
+               Alternative could be to save this string to a file? */
+            JOptionPane.showMessageDialog(null, intermediateStopsAndCosts.toString());
             return true;
-        }
-        else {
-            System.out.println("There's no path from stop \"" + sourceStop + "\" to stop \"" + destinationStop + "\"");
         }
         return false;
     }
@@ -54,26 +65,24 @@ public class FindShortestPath {
     private static AbstractMap.SimpleEntry<Integer, Integer> vertexPair() {
 
         boolean validInput = false;
+        int from = -1; //This of course assumes no stop ID is negative
+        int to = -1;
 
         while (!validInput) {
 
             String fromVertex = JOptionPane.showInputDialog("Enter the ID of the first stop");
             String toVertex = JOptionPane.showInputDialog("Enter the ID of the second stop");
-            int from = Integer.parseInt(fromVertex);
-            int to = Integer.parseInt(toVertex);
+            from = Integer.parseInt(fromVertex);
+            to = Integer.parseInt(toVertex);
 
             if ( (vertexEncountered.get(from) != null) && (vertexEncountered.get(to) != null) ) {
                 validInput = true;
             }
-
             else {
                 JOptionPane.showMessageDialog(null, "One of the stops " +
-                        "entered has no adjacent edges");
+                        "entered has no adjacent edges", "Error!", JOptionPane.ERROR_MESSAGE);
             }
-
-
         }
-
         return new AbstractMap.SimpleEntry<Integer, Integer>(from, to);
     }
 
@@ -98,7 +107,7 @@ public class FindShortestPath {
         }
         catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(null,"File used to initialise graph " +
-                    "not found. Read terminal for stack trace");
+                    "not found. Read terminal for stack trace", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         return myGraph;
     }
@@ -122,15 +131,16 @@ public class FindShortestPath {
                 //Split current line of file into string array. Assign each datum to required variable.
                 String currentLine = scanFile.nextLine();
                 String[] currentLineParse = currentLine.split(",");
-                fromVertex = Integer.parseInt(currentLineParse[0]);
-                toVertex = Integer.parseInt(currentLineParse[1]);
-                transferType = Integer.parseInt(currentLineParse[2]);
-                minTransferTime = Double.parseDouble(currentLineParse[3]);
+                fromVertex = Integer.parseInt(currentLineParse[FROM_INDEX]);
+                toVertex = Integer.parseInt(currentLineParse[TO_INDEX]);
+                transferType = Integer.parseInt(currentLineParse[TRANSFER_TYPE_INDEX]);
 
                 if (transferType==0)
                     weight = 2;
-                else if (transferType==2)
-                    weight = minTransferTime/100;
+                else if (transferType==2) {
+                    minTransferTime = Double.parseDouble(currentLineParse[MIN_TRANSFER_TIME_INDEX]);
+                    weight = minTransferTime / 100;
+                }
 
                 DirectedEdge currentEdge = new DirectedEdge(fromVertex, toVertex, weight);
                 myGraph.addEdge(currentEdge);
@@ -140,7 +150,7 @@ public class FindShortestPath {
         }
         catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(null,"Transfers file not found." +
-                    "Read terminal for stack trace");
+                    "Read terminal for stack trace", "Error!", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
         return myGraph;
@@ -169,13 +179,13 @@ public class FindShortestPath {
                 String nextLine = scanFile.nextLine();
                 String[] nextLineParse = currentLine.split(",");
 
-                currentTripID = Integer.parseInt(currentLineParse[0]);
-                currentStopID = Integer.parseInt(currentLineParse[3]);
-                currentStopSequenceNumber = Integer.parseInt(currentLineParse[4]);
+                currentTripID = Integer.parseInt(currentLineParse[TRIP_ID_INDEX]);
+                currentStopID = Integer.parseInt(currentLineParse[STOP_ID_INDEX]);
+                currentStopSequenceNumber = Integer.parseInt(currentLineParse[STOP_SEQ_INDEX]);
 
-                nextTripID = Integer.parseInt(currentLineParse[0]);
-                nextStopID = Integer.parseInt(currentLineParse[3]);
-                nextStopSequenceNumber = Integer.parseInt(currentLineParse[4]);
+                nextTripID = Integer.parseInt(currentLineParse[TRIP_ID_INDEX]);
+                nextStopID = Integer.parseInt(currentLineParse[STOP_ID_INDEX]);
+                nextStopSequenceNumber = Integer.parseInt(currentLineParse[STOP_SEQ_INDEX]);
 
                 if ( (currentTripID == nextTripID) && (currentStopSequenceNumber == (nextStopSequenceNumber-1)) ) {
                     DirectedEdge currentEdge = new DirectedEdge(currentStopID, nextStopID, weight);
@@ -190,13 +200,9 @@ public class FindShortestPath {
         }
         catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(null,"Stop times file not found." +
-                    "Read terminal for stack trace");
+                    "Read terminal for stack trace", "Error!", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
         return myGraph;
     }
-
-
-
-
 }

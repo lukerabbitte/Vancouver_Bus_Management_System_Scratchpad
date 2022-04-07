@@ -37,7 +37,8 @@ public class Main {
                 callSearchByArrivalTime();
             }
             else
-                JOptionPane.showMessageDialog(null,"There has been an error. Try again.");
+                JOptionPane.showMessageDialog(null,"There has been an error. Try again.",
+                        "Error!", JOptionPane.ERROR_MESSAGE);
         }
 
     }
@@ -48,16 +49,17 @@ public class Main {
         JOptionPane.showMessageDialog(f,"Welcome to the Vancouver Bus Management System");
 
         Object[] menuOptions = {"Quit", "Find Shortest Path Between Two Stops", "Search For A Stop", "Search By Arrival Time"};
-        Object selectedObject = JOptionPane.showInputDialog(f, "Please choose an option from the menu", "Menu", JOptionPane.PLAIN_MESSAGE, null, menuOptions, menuOptions[0]);
+        Object selectedObject = JOptionPane.showInputDialog(f, "Please choose an option from the menu",
+                "Menu", JOptionPane.PLAIN_MESSAGE, null, menuOptions, menuOptions[0]);
         String selectionString = selectedObject.toString();
 
         if (selectionString=="Quit")
             choice = 0;
-        else if (selectionString=="Find Shortest Path Between Two Stops")
+        else if (selectionString.equals("Find Shortest Path Between Two Stops"))
             choice = 1;
-        else if (selectionString=="Search For A Stop")
+        else if (selectionString.equals("Search For A Stop"))
             choice = 2;
-        else if (selectionString=="Search By Arrival Time")
+        else if (selectionString.equals("Search By Arrival Time"))
             choice = 3;
 
         return choice;
@@ -80,7 +82,8 @@ public class Main {
         boolean successfulCall = false;
 
         while(!successfulCall) {
-            String stopName = JOptionPane.showInputDialog("Enter the name of the bus stop you are searching for");
+            String stopName = JOptionPane.showInputDialog("Enter the name or the first few characters" +
+                    " of the bus stop you are searching for");
             if(myStopSearch.displayStopDetails(stopName.toUpperCase()))
                 successfulCall = true;
         }
@@ -101,7 +104,8 @@ public class Main {
                 if(SearchByArrivalTime.getDetails(arrivalTime))
                     successfulCall = true;
             } catch(ParseException e) {
-                System.out.println("\"" + arrivalTime + "\" is not in a valid time format. \n");
+                JOptionPane.showMessageDialog(null, "Invalid time format given",
+                        "Error!", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
