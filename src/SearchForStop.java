@@ -67,7 +67,7 @@ public class SearchForStop {
                 myTST.put(stopNameAdjusted, stopID);
 
                 StringBuilder fullStopDetails = new StringBuilder();
-                fullStopDetails.append("Stop_ID: " + stopID + "\n");
+                fullStopDetails.append("Stop ID: " + stopID + "\n");
                 fullStopDetails.append("Stop Code: " + currentStopDetails[STOP_CODE_INDEX] + "\n");
                 fullStopDetails.append("Stop Name: " + stopName + "\n");
                 fullStopDetails.append("Stop Description: " + currentStopDetails[STOP_DESC_INDEX] + "\n");
@@ -105,7 +105,7 @@ public class SearchForStop {
                     " bus stop specified.");
         }
         else {
-            ShowScrollingText longMessage = new ShowScrollingText(outputBuilder.toString());
+            ShowScrollingText longMessage = new ShowScrollingText((outputBuilder.toString()) , "Stops");
         }
         return outputSuccessful[0];
     }

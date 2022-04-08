@@ -11,36 +11,36 @@ public class Main {
 
     public static void main(String[] args) {
 
-        boolean validInput = false;
+        boolean userWantsToQuit = false;
+        boolean invalidInput = false;
         int optionChoice = -1;
 
-        while (!validInput) {
+        while (!userWantsToQuit) {
 
             optionChoice = showMenuAndReturnChoice(optionChoice);
 
             //Default optionChoice value will be -1 if there is some error. Otherwise 0, 1, 2, or 3.
             if (optionChoice == 0) {
-                validInput = true;
+                userWantsToQuit = true;
                 JOptionPane.showMessageDialog(null,"You have successfully exited" +
                         " the Vancouver Bus Management System Interface.");
             }
             else if (optionChoice == 1) {
-                validInput = true;
                 callFindShortestPath();
             }
             else if (optionChoice == 2) {
-                validInput = true;
                 callSearchForStop();
             }
             else if (optionChoice == 3) {
-                validInput = true;
                 callSearchByArrivalTime();
             }
             else
-                JOptionPane.showMessageDialog(null,"There has been an error. Try again.",
-                        "Error!", JOptionPane.ERROR_MESSAGE);
+                invalidInput = true;
         }
 
+        if (invalidInput)
+            JOptionPane.showMessageDialog(null,"There has been an error. Try again.",
+                    "Error!", JOptionPane.ERROR_MESSAGE);
     }
 
     private static int showMenuAndReturnChoice(int choice) {
@@ -53,7 +53,7 @@ public class Main {
                 "Menu", JOptionPane.PLAIN_MESSAGE, null, menuOptions, menuOptions[0]);
         String selectionString = selectedObject.toString();
 
-        if (selectionString=="Quit")
+        if (selectionString.equals("Quit"))
             choice = 0;
         else if (selectionString.equals("Find Shortest Path Between Two Stops"))
             choice = 1;
@@ -93,7 +93,8 @@ public class Main {
 
         boolean successfulCall = false;
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        timeFormat.setLenient(false); // ensure strict conditions on numbers entered
+        timeFormat.setLenient(false);
+        SearchByArrivalTime mySearchByArrivalTime = new SearchByArrivalTime("stop_times.txt");
 
         while(!successfulCall) {
 
@@ -101,7 +102,7 @@ public class Main {
 
             try {
                 timeFormat.parse(arrivalTime);
-                if(SearchByArrivalTime.getDetails(arrivalTime))
+                if(mySearchByArrivalTime.getDetails(arrivalTime))
                     successfulCall = true;
             } catch(ParseException e) {
                 JOptionPane.showMessageDialog(null, "Invalid time format given",

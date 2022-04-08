@@ -8,8 +8,16 @@ import javax.swing.*;
 public class ShowScrollingText
 {
     private String messageToDisplay;
+    private boolean isStops;
+    private boolean isTrips;
 
-    ShowScrollingText(String message) {
+    ShowScrollingText(String message, String typeOfMessage) {
+
+        if (typeOfMessage.equals("Stops"))
+            this.isStops = true;
+        else if (typeOfMessage.equals("Trips"))
+            this.isTrips = true;
+
         this.messageToDisplay = message;
         ShowScrollingDialog myDialog = new ShowScrollingDialog();
         myDialog.display();
@@ -30,8 +38,16 @@ public class ShowScrollingText
         }
 
         void display() {
-            JOptionPane.showMessageDialog(null, scrollPane,
-                    "All relevant stops", JOptionPane.INFORMATION_MESSAGE);
+
+            if (isStops==true) {
+                JOptionPane.showMessageDialog(null, scrollPane,
+                        "All relevant stops", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            else if (isTrips==true) {
+                JOptionPane.showMessageDialog(null, scrollPane,
+                        "All relevant trips, sorted by ascending Trip ID", JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 }
