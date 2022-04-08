@@ -91,7 +91,7 @@ public class SearchForStop {
     }
 
     public boolean displayStopDetails(String inputString) {
-
+        
         final boolean[] outputSuccessful = {false};
         StringBuilder outputBuilder = new StringBuilder();
 

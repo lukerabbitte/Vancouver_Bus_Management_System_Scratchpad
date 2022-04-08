@@ -8,12 +8,15 @@ import javax.swing.*;
 public class ShowScrollingText
 {
     private String messageToDisplay;
+    private boolean isIntermediateStops;
     private boolean isStops;
     private boolean isTrips;
 
     ShowScrollingText(String message, String typeOfMessage) {
 
-        if (typeOfMessage.equals("Stops"))
+        if (typeOfMessage.equals("Intermediate Stops"))
+            this.isIntermediateStops = true;
+        else if (typeOfMessage.equals("Stops"))
             this.isStops = true;
         else if (typeOfMessage.equals("Trips"))
             this.isTrips = true;
@@ -39,7 +42,12 @@ public class ShowScrollingText
 
         void display() {
 
-            if (isStops==true) {
+            if (isIntermediateStops==true) {
+                JOptionPane.showMessageDialog(null, scrollPane,
+                        "All intermediate stops between two given stops", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            else if (isStops==true) {
                 JOptionPane.showMessageDialog(null, scrollPane,
                         "All relevant stops", JOptionPane.INFORMATION_MESSAGE);
             }
