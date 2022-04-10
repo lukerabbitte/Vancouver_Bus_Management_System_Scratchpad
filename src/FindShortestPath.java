@@ -19,7 +19,7 @@ public class FindShortestPath {
     private static final int STOP_ID_INDEX = 3;
     private static final int STOP_SEQ_INDEX = 4;
 
-    private EdgeWeightedDigraph myGraph;
+    private static EdgeWeightedDigraph myGraph;
     private static HashMap<Integer, Integer> dijkstraMap = new HashMap<Integer, Integer>();
     private static HashMap<Integer, Integer> reverseDijkstraMap = new HashMap<Integer, Integer>();
     private int mapIndex = 0;
@@ -205,13 +205,15 @@ public class FindShortestPath {
                 badStopIDEntry = true;
             }
 
-            //Check that there are edges adjacent to both source and destination vertices/stops
-            if ((dijkstraMap.get(from) != null) && (dijkstraMap.get(to) != null)) {
+            if ((dijkstraMap.get(from) != null) && (dijkstraMap.get(to) != null))
                 validInput = true;
-            } else if (!badStopIDEntry){
-                JOptionPane.showMessageDialog(null, "One or both of the stops " +
-                        "entered has no adjacent edges", "Error!", JOptionPane.ERROR_MESSAGE);
+
+            //One of the Stop ID doesn't correspond to vertex in Graph Error
+             else if (!badStopIDEntry) {
+                JOptionPane.showMessageDialog(null, "One or both of the Stop IDs " +
+                        "entered does not exist in this bus system", "Error!", JOptionPane.ERROR_MESSAGE);
             }
+
         }
 
         //Retrieve the graph array index associated with the stopID given by user

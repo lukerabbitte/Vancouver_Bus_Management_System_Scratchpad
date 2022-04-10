@@ -102,7 +102,7 @@ public class SearchForStop {
 
         if (outputSuccessful[0]==false) {
             JOptionPane.showMessageDialog(null,"No matches have been found for the" +
-                    " bus stop specified.");
+                    " bus stop specified.", "Error!", JOptionPane.ERROR_MESSAGE);
         }
         else {
             ShowScrollingText longMessage = new ShowScrollingText((outputBuilder.toString()) , "Stops");
