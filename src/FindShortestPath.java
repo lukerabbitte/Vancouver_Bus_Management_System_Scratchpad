@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.ParseException;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -143,9 +144,9 @@ public class FindShortestPath {
                 currentStopID = Integer.parseInt(currentLineParse[STOP_ID_INDEX]);
                 currentStopSequenceNumber = Integer.parseInt(currentLineParse[STOP_SEQ_INDEX]);
 
-                nextTripID = Integer.parseInt(currentLineParse[TRIP_ID_INDEX]);
-                nextStopID = Integer.parseInt(currentLineParse[STOP_ID_INDEX]);
-                nextStopSequenceNumber = Integer.parseInt(currentLineParse[STOP_SEQ_INDEX]);
+                nextTripID = Integer.parseInt(nextLineParse[TRIP_ID_INDEX]);
+                nextStopID = Integer.parseInt(nextLineParse[STOP_ID_INDEX]);
+                nextStopSequenceNumber = Integer.parseInt(nextLineParse[STOP_SEQ_INDEX]);
 
                 if ((currentTripID == nextTripID) && (currentStopSequenceNumber == (nextStopSequenceNumber - 1))) {
 
@@ -179,6 +180,7 @@ public class FindShortestPath {
     public static boolean getShortestPath() {
 
         boolean validInput = false;
+        boolean badStopIDEntry = false;
         int from = -1; //This of course assumes no stop ID is negative
         int to = -1;
         double totalCost = -1.0;
@@ -193,13 +195,20 @@ public class FindShortestPath {
 
             String fromVertex = JOptionPane.showInputDialog("Enter the ID of the first stop");
             String toVertex = JOptionPane.showInputDialog("Enter the ID of the second stop");
-            from = Integer.parseInt(fromVertex);
-            to = Integer.parseInt(toVertex);
+
+            try {
+                from = Integer.parseInt(fromVertex);
+                to = Integer.parseInt(toVertex);
+            } catch(Exception e) {
+                JOptionPane.showMessageDialog(null, "Please enter valid stop IDs",
+                        "Error!", JOptionPane.ERROR_MESSAGE);
+                badStopIDEntry = true;
+            }
 
             //Check that there are edges adjacent to both source and destination vertices/stops
             if ((dijkstraMap.get(from) != null) && (dijkstraMap.get(to) != null)) {
                 validInput = true;
-            } else {
+            } else if (!badStopIDEntry){
                 JOptionPane.showMessageDialog(null, "One or both of the stops " +
                         "entered has no adjacent edges", "Error!", JOptionPane.ERROR_MESSAGE);
             }
