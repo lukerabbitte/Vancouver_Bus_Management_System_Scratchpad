@@ -1,8 +1,8 @@
-##Functionality
+## Functionality
 
 https://github.com/lukerabbitte/translink_path_planning/assets/72459539/4079cd41-c325-487f-a943-57bb309da301
 
-**Finding the Shortest Path Between Two Stops**
+## Finding the Shortest Path Between Two Stops**
 
 *Input Files: stops.txt, transfers.txt, stop_times.txt*  
 *Runtime Files: Main.java, FindShortestPath.java, DijkstraSP.java, EdgeWeightedDigraph.java, DirectedEdge.java, ShowScrollingText.java*
@@ -17,7 +17,7 @@ During the shortest path algorithm, I use a string builder to create the output 
 
 I chose to use Dijkstra, a single-source shortest path algorithm. This is based on a min-heap priority queue and runs at a time complexity of O(V + ElogV), where V is the vertex count and E is the edge count. I considered using the A* algorithm which matches a single source vertex to a single sink vertex, as this could have been more efficient than the single-source behavior of Dijkstra. However, A* requires a combination of Dijkstra and a heuristic. I considered creating a heuristic function based on the latitudinal and longitudinal positions of the stops but decided to keep things simple.
 
-**Finding Stop Information Based on Part or All of the Stop Name**
+## Finding Stop Information Based on Part or All of the Stop Name**
 
 *Input Files: stops.txt*  
 *Runtime Files: Main.java, SearchForStop.java, ShowScrollingText.java*
@@ -26,7 +26,7 @@ This program reads stops from the stops.txt file, uses a string builder to move 
 
 Each node in our TST stores the adjusted stop name string as the key, and length 10 arrays containing the full stop information as the value. The TST class contains a method that allows us to search for keys with certain prefixes, which caters for the required behavior of searching by the first few characters of a stop name. Inserting into and searching a TST will take an amount of time proportional to the height of the tree (which could be O(n) in the worst case, where n is the amount of string keys to be stored). However, the average case of insertion will be Θ(logn). The TST itself will take space proportional to the amount of stops that need to be stored.
 
-**Finding Trip Information Based on a Given Arrival Time**
+## Finding Trip Information Based on a Given Arrival Time**
 
 *Input Files: stop_times.txt*  
 *Runtime Files: Main.java, SearchByArrivalTime.java, ShowScrollingText.java*
