@@ -1,3 +1,7 @@
+##Functionality
+
+https://github.com/lukerabbitte/translink_path_planning/assets/72459539/76207a04-c41b-4869-8198-273430ed1f72
+
 **Finding the Shortest Path Between Two Stops**
 
 *Input Files: stops.txt, transfers.txt, stop_times.txt*  
